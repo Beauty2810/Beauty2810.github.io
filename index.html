@@ -58,6 +58,8 @@
       list-style: none;
     }
 
+    .nav-toggle { display: none; }
+
     .nav-links a {
       text-decoration: none;
       font-size: 0.75rem;
@@ -589,15 +591,59 @@
     }
 
     @media (max-width: 768px) {
-      nav { padding: 1rem 1.5rem; }
-      .nav-links { display: none; }
+      nav { padding: 1.2rem 1.5rem; }
+      
+      .nav-toggle {
+        display: block;
+        cursor: pointer;
+        font-size: 1.2rem;
+        color: var(--blush);
+        z-index: 101;
+      }
+
+      .nav-links {
+        position: fixed;
+        top: 0; right: -100%;
+        width: 100%; height: 100vh;
+        background: rgba(14,12,12,0.98);
+        backdrop-filter: blur(20px);
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 3rem;
+        transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        z-index: 100;
+      }
+
+      .nav-links.active { right: 0; }
+      .nav-links a { font-size: 1.1rem; }
+
       section, #hero, footer { padding-left: 1.5rem; padding-right: 1.5rem; }
+      
+      h1 { font-size: clamp(2.8rem, 12vw, 4.5rem); }
+
+      .profile-area {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1.5rem;
+      }
+
+      .profile-img-placeholder { width: 110px; height: 110px; }
+
+      .exp-top { flex-direction: column; gap: 0.5rem; }
+      .exp-date { padding-top: 0; color: var(--blush-deep); }
+
       .skill-row { grid-template-columns: 1fr; }
-      .skill-cat { border-right: none; border-bottom: 1px solid var(--blush-border); }
+      .skill-cat { border-right: none; border-bottom: 1px solid var(--blush-border); padding: 1rem 1.5rem; }
+      .skill-items { padding: 1rem 1.5rem; }
+
       .projects-list, .awards-split, .contact-grid { grid-template-columns: 1fr; }
-      .project-item { border-right: none; border-bottom: 1px solid var(--blush-border); }
+      .project-item { border-right: none; border-bottom: 1px solid var(--blush-border); padding: 2rem 1.5rem; }
       .awards-split { gap: 3rem; }
-      .resume-link-block { padding: 2rem; }
+      .resume-link-block { padding: 2rem 1.5rem; flex-direction: column; align-items: flex-start; }
+      
+      .contact-link { padding: 1.2rem 1.5rem; }
     }
   </style>
 </head>
@@ -605,7 +651,10 @@
 
   <nav>
     <div class="nav-logo">Beauty Atara</div>
-    <ul class="nav-links">
+    <div class="nav-toggle" id="navToggle">
+      <i class="fas fa-bars"></i>
+    </div>
+    <ul class="nav-links" id="navLinks">
       <li><a href="#about">About</a></li>
       <li><a href="#skills">Skills</a></li>
       <li><a href="#experience">Experience</a></li>
@@ -952,6 +1001,25 @@
     }, { threshold: 0.07 });
 
     document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+
+    // Nav Toggle
+    const navToggle = document.getElementById('navToggle');
+    const navLinks = document.getElementById('navLinks');
+    const navLinksList = document.querySelectorAll('.nav-links a');
+
+    navToggle.addEventListener('click', () => {
+      navLinks.classList.toggle('active');
+      navToggle.querySelector('i').classList.toggle('fa-bars');
+      navToggle.querySelector('i').classList.toggle('fa-times');
+    });
+
+    navLinksList.forEach(link => {
+      link.addEventListener('click', () => {
+        navLinks.classList.remove('active');
+        navToggle.querySelector('i').classList.add('fa-bars');
+        navToggle.querySelector('i').classList.remove('fa-times');
+      });
+    });
 
     const sections = document.querySelectorAll('section[id]');
     const links = document.querySelectorAll('.nav-links a');
